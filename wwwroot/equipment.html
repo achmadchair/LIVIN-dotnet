@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIVIN - Equipment Gallery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 0; overflow-x: hidden; }
+        .bg-gradient-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.15; z-index: -1; animation: pulse-slow 15s infinite alternate; }
+        .blob-tr { top: -10%; right: -5%; width: 50vw; height: 50vw; background: radial-gradient(circle, #3b82f6 0%, transparent 70%); }
+        .blob-bl { bottom: -10%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, #8b5cf6 0%, transparent 70%); animation-delay: 5s; }
+        @keyframes pulse-slow { 0% { transform: scale(1); opacity: 0.1; } 100% { transform: scale(1.1); opacity: 0.2; } }
+        .glass-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5); }
+        .menu-item { transition: all 0.2s ease; cursor: pointer; }
+        .menu-item:hover, .menu-item.active { background: linear-gradient(90deg, rgba(79, 70, 229, 0.1) 0%, rgba(79, 70, 229, 0) 100%); border-left: 3px solid #6366f1; color: white; }
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-btn { transition: all 0.3s ease; }
+        .tab-btn.active { background: rgba(99, 102, 241, 0.2); color: #818cf8; border-bottom: 2px solid #818cf8; }
+    </style>
+</head>
+<body class="min-h-screen flex">
+    <script>if (!localStorage.getItem('token')) window.location.href = '/';</script>
+
+    <div class="bg-gradient-blob blob-tr"></div>
+    <div class="bg-gradient-blob blob-bl"></div>
+
+    <!-- Sidebar -->
+    <aside class="w-64 glass-card border-r border-slate-700/50 hidden md:flex flex-col flex-shrink-0 relative z-20">
+        <div class="h-20 flex items-center px-8 border-b border-slate-700/50">
+            <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">LIVIN<span class="text-slate-400 font-light text-lg">App</span></h1>
+        </div>
+        <div class="p-6 flex-1 overflow-y-auto">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Main Menu</p>
+            <nav class="space-y-2">
+                <a href="/home.html" class="menu-item flex items-center px-4 py-3 rounded-r-lg text-slate-400 hover:text-slate-200 group">
+                    <svg class="w-5 h-5 mr-3 text-slate-500 group-hover:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    Dashboard
+                </a>
+                <a href="/equipment.html" class="menu-item active flex items-center px-4 py-3 rounded-r-lg text-slate-300 group">
+                    <svg class="w-5 h-5 mr-3 text-indigo-400 group-hover:text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    Equipment
+                </a>
+                <a href="/inspections.html" class="menu-item flex items-center px-4 py-3 rounded-r-lg text-slate-400 hover:text-slate-200 group">
+                    <svg class="w-5 h-5 mr-3 text-slate-500 group-hover:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    Inspections
+                </a>
+                <a href="/maintenance.html" class="menu-item flex items-center px-4 py-3 rounded-r-lg text-slate-400 hover:text-slate-200 group">
+                    <svg class="w-5 h-5 mr-3 text-slate-500 group-hover:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Maintenance
+                </a>
+                <a href="/users.html" class="menu-item flex items-center px-4 py-3 rounded-r-lg text-slate-400 hover:text-slate-200 group">
+                    <svg class="w-5 h-5 mr-3 text-slate-500 group-hover:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    Users
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col relative z-10 w-full overflow-hidden">
+        <!-- Header -->
+        <header class="h-20 glass-card border-b border-slate-700/50 flex items-center justify-between px-8 sticky top-0 z-30">
+            <div class="flex items-center text-slate-300">
+                <div class="text-sm font-medium tracking-wide">
+                    <span class="text-slate-500">Pages</span> <span class="mx-2">/</span> <span class="text-white">Equipment</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-8 pb-20 overflow-y-auto flex-1">
+            
+            <div class="flex justify-between items-end mb-10 fade-in">
+                <div>
+                    <h2 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 mb-2">Equipment Management</h2>
+                    <p class="text-slate-400">View your gallery or import data via CSV templates.</p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex border-b border-slate-700/50 mb-6 gap-8 text-sm font-medium text-slate-400 px-2 fade-in">
+                <button id="tabGalleryBtn" class="tab-btn active pb-3 px-2 focus:outline-none" onclick="switchTab('gallery')">Gallery</button>
+                <button id="tabUploadBtn" class="tab-btn pb-3 px-2 focus:outline-none" onclick="switchTab('upload')">Bulk Upload</button>
+            </div>
+
+            <!-- Gallery View -->
+            <div id="viewGallery" class="fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="equipmentGrid">
+                    <!-- Loaded dynamically -->
+                    <div class="col-span-full py-10 text-center text-slate-500">
+                        <svg class="animate-spin h-8 w-8 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        Loading equipment...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload View -->
+            <div id="viewUpload" class="hidden fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                    
+                    <!-- Form Equipment -->
+                    <div class="glass-card rounded-2xl p-6 relative">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-4 border border-blue-500/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Upload Equipment</h3>
+                        <p class="text-slate-400 text-sm mb-6">Import master equipment records.</p>
+                        
+                        <a href="/api/Equipment/template/equipment" class="w-full mb-4 px-4 py-2 border border-slate-600 rounded-lg text-sm flex items-center justify-center hover:bg-slate-800 transition">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Download Template CSV
+                        </a>
+
+                        <form class="space-y-4" onsubmit="uploadCSV(event, 'equipment')">
+                            <input type="file" required accept=".csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500/10 file:text-blue-400 hover:file:bg-blue-500/20 cursor-pointer"/>
+                            <button type="submit" class="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-500 transition shadow-lg shadow-blue-500/30">Upload to Database</button>
+                        </form>
+                    </div>
+
+                    <!-- Form Schedule -->
+                    <div class="glass-card rounded-2xl p-6 relative">
+                        <div class="w-12 h-12 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center mb-4 border border-teal-500/30">
+                            <!-- Calendar / Schedule Icon -->
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Upload Schedule</h3>
+                        <p class="text-slate-400 text-sm mb-6">Import equipment schedules (site, kodehac, nama eqquipment).</p>
+                        
+                        <a href="/api/Equipment/template/schedule" class="w-full mb-4 px-4 py-2 border border-slate-600 rounded-lg text-sm flex items-center justify-center hover:bg-slate-800 transition">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Download Template CSV
+                        </a>
+
+                        <form class="space-y-4" onsubmit="uploadCSV(event, 'schedule')">
+                            <input type="file" required accept=".csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-500/10 file:text-teal-400 hover:file:bg-teal-500/20 cursor-pointer"/>
+                            <button type="submit" class="w-full bg-teal-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-teal-500 transition shadow-lg shadow-teal-500/30">Upload to Database</button>
+                        </form>
+                    </div>
+
+                    <!-- Form Task -->
+                    <div class="glass-card rounded-2xl p-6 relative">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-4 border border-indigo-500/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Upload Tasks</h3>
+                        <p class="text-slate-400 text-sm mb-6">Bind tasks to existing equipment.</p>
+                        
+                        <a href="/api/Equipment/template/task" class="w-full mb-4 px-4 py-2 border border-slate-600 rounded-lg text-sm flex items-center justify-center hover:bg-slate-800 transition">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Download Template CSV
+                        </a>
+
+                        <form class="space-y-4" onsubmit="uploadCSV(event, 'task')">
+                            <input type="file" required accept=".csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20 cursor-pointer"/>
+                            <button type="submit" class="w-full bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/30">Upload to Database</button>
+                        </form>
+                    </div>
+
+                    <!-- Form Standard -->
+                    <div class="glass-card rounded-2xl p-6 relative">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-4 border border-purple-500/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Upload Standards</h3>
+                        <p class="text-slate-400 text-sm mb-6">Bind standards to equipment tasks.</p>
+                        
+                        <a href="/api/Equipment/template/standard" class="w-full mb-4 px-4 py-2 border border-slate-600 rounded-lg text-sm flex items-center justify-center hover:bg-slate-800 transition">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Download Template CSV
+                        </a>
+
+                        <form class="space-y-4" onsubmit="uploadCSV(event, 'standard')">
+                            <input type="file" required accept=".csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-500/10 file:text-purple-400 hover:file:bg-purple-500/20 cursor-pointer"/>
+                            <button type="submit" class="w-full bg-purple-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-purple-500 transition shadow-lg shadow-purple-500/30">Upload to Database</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Global Toast notification -->
+    <div id="toast" class="fixed bottom-5 right-5 glass-card border-green-500/30 text-emerald-300 p-4 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.2)] transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center">
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span id="toastMsg" class="font-medium text-sm">Success!</span>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            if(isError) {
+                t.classList.replace('border-green-500/30', 'border-red-500/30');
+                t.classList.replace('text-emerald-300', 'text-rose-400');
+            } else {
+                t.classList.replace('border-red-500/30', 'border-green-500/30');
+                t.classList.replace('text-rose-400', 'text-emerald-300');
+            }
+            t.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 4000);
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('viewGallery').classList.add('hidden');
+            document.getElementById('viewUpload').classList.add('hidden');
+            
+            if(tab === 'gallery') {
+                document.getElementById('tabGalleryBtn').classList.add('active');
+                document.getElementById('viewGallery').classList.remove('hidden');
+                loadGallery();
+            } else {
+                document.getElementById('tabUploadBtn').classList.add('active');
+                document.getElementById('viewUpload').classList.remove('hidden');
+            }
+        }
+
+        async function loadGallery() {
+            try {
+                const res = await fetch('/api/Equipment', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                const grid = document.getElementById('equipmentGrid');
+                grid.innerHTML = '';
+                
+                if(!data || data.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full py-10 text-center text-slate-500">No equipment found. Try uploading some!</div>`;
+                    return;
+                }
+
+                data.forEach(eq => {
+                    const typeBadge = eq.type ? `<span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded text-xs ml-2">${eq.type}</span>` : '';
+                    grid.innerHTML += `
+                        <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                            <div class="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center border border-slate-700 mb-4 shadow-lg text-slate-300">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white leading-tight flex items-center flex-wrap gap-y-2">M/C: ${eq.name}${typeBadge}</h3>
+                            <p class="text-indigo-400 font-mono text-sm mt-1 mb-4">${eq.hacCode}</p>
+                            <div class="flex items-center text-xs text-slate-400">
+                                <span class="bg-slate-800 px-2 py-1 rounded inline-flex items-center"><svg class="w-3 h-3 mr-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> 
+                                ${eq.siteName || 'Unknown Site'}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch(err) {
+                console.error(err);
+                showToast('Failed to load gallery', true);
+            }
+        }
+
+        async function uploadCSV(e, type) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const fileInput = e.target.querySelector('input[type="file"]');
+            
+            if(!fileInput.files.length) return;
+
+            const ogText = btn.innerText;
+            btn.innerText = 'Uploading...';
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const res = await fetch(`/api/Equipment/upload/${type}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                
+                if(res.ok) {
+                    const data = await res.json();
+                    showToast(data.message);
+                    e.target.reset(); // clear file input
+                    loadGallery(); // refresh data in bg
+                } else {
+                    showToast('Upload failed: ' + await res.text(), true);
+                }
+            } catch(err) {
+                showToast('Network error during upload', true);
+            } finally {
+                btn.innerText = ogText;
+                btn.disabled = false;
+            }
+        }
+
+        // Initialize gallery on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('role');
+            if(role !== 'Leader') {
+                const uploadTab = document.getElementById('tabUploadBtn');
+                if(uploadTab) uploadTab.style.display = 'none';
+                
+                const usersMenu = document.querySelector('a[href="/users.html"]');
+                if (usersMenu) usersMenu.style.display = 'none';
+            }
+            loadGallery();
+        });
+    </script>
+</body>
+</html>

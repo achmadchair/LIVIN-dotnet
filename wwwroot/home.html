@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIVIN - Home Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Abstract Background blobs */
+        .bg-gradient-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: pulse-slow 15s infinite alternate;
+        }
+        .blob-tr { top: -10%; right: -5%; width: 50vw; height: 50vw; background: radial-gradient(circle, #3b82f6 0%, transparent 70%); }
+        .blob-bl { bottom: -10%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, #8b5cf6 0%, transparent 70%); animation-delay: 5s; }
+
+        @keyframes pulse-slow {
+            0% { transform: scale(1); opacity: 0.1; }
+            100% { transform: scale(1.1); opacity: 0.2; }
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-item {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .menu-item:hover, .menu-item.active {
+            background: linear-gradient(90deg, rgba(79, 70, 229, 0.1) 0%, rgba(79, 70, 229, 0) 100%);
+            border-left: 3px solid #6366f1;
+            color: white;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Delay utilities for staggered animations */
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+    </style>
+</head>
+<body class="min-h-screen flex">
+
+    <!-- Auth check script (runs instantly before body renders) -->
+    <script>
+        if (!localStorage.getItem('token')) {
+            window.location.href = '/';
+        }
+    </script>
+
+    <!-- Background Decoration -->
+    <div class="bg-gradient-blob blob-tr"></div>
+    <div class="bg-gradient-blob blob-bl"></div>
+
+    <!-- Sidebar -->
+    <aside class="w-64 glass-card border-r border-slate-700/50 hidden md:flex flex-col flex-shrink-0 relative z-20">
+        <div class="h-20 flex items-center px-8 border-b border-slate-700/50">
+            <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
+                LIVIN<span class="text-slate-400 font-light text-lg">App</span>
+            </h1>
+        </div>
+
+        <div class="p-6 flex-1 overflow-y-auto">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Main Menu</p>
+            <nav class="space-y-2">
+                <a href="/home.html" class="menu-item active flex items-center px-4 py-3 rounded-r-lg text-slate-300 group">
+                    <svg class="w-5 h-5 mr-3 text-indigo-400 group-hover:text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    Dashboard
+                </a>
+                <a href="/equipment.html" class="menu-item flex items-center px-4 py-3 rounded-r-lg text-slate-400 hover:text-slate-200 group">
+                    <svg class="w-5 h-5 mr-3 text-slate-500 group-hover:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    Equipment
+                </a>
+                <a href="/inspections.html" class="menu-item flex items-center px-4 py-3 rounded-r-lg text-slate-400 hover:text-slate-200 group">
+                    <svg class="w-5 h-5 mr-3 text-slate-500 group-hover:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    Inspections
+                </a>
+                <a href="/maintenance.html" class="menu-item flex items-center px-4 py-3 rounded-r-lg text-slate-400 hover:text-slate-200 group">
+                    <svg class="w-5 h-5 mr-3 text-slate-500 group-hover:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Maintenance
+                </a>
+                <a href="/users.html" class="menu-item flex items-center px-4 py-3 rounded-r-lg text-slate-400 hover:text-slate-200 group">
+                    <svg class="w-5 h-5 mr-3 text-slate-500 group-hover:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    Users
+                </a>
+            </nav>
+        </div>
+        
+        <div class="p-6 border-t border-slate-700/50">
+            <button id="logoutBtn" class="w-full flex items-center justify-center space-x-2 text-sm text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-500/30 transition px-4 py-2.5 rounded-lg border border-rose-500/20 hover:border-rose-500/50">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                <span>Log Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col relative z-10 w-full">
+        <!-- Top Header -->
+        <header class="h-20 glass-card border-b border-slate-700/50 flex items-center justify-between px-8 sticky top-0">
+            <div class="flex items-center text-slate-300">
+                <!-- Mobile menu button -->
+                <button class="md:hidden mr-4 p-2 text-slate-400 hover:text-white transition rounded-lg hover:bg-slate-800">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+                <div class="text-sm font-medium tracking-wide">
+                    <span class="text-slate-500">Pages</span> <span class="mx-2">/</span> <span class="text-white">Dashboard</span>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-6">
+                <!-- Notifications -->
+                <button class="text-slate-400 hover:text-white transition relative">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-rose-500 rounded-full"></span>
+                </button>
+
+                <!-- Profile Dropdown -->
+                <div class="flex items-center space-x-3 cursor-pointer group">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 p-[2px]">
+                        <div class="w-full h-full rounded-full border-2 border-slate-900 overflow-hidden bg-slate-800 flex items-center justify-center">
+                            <span id="navAvatar" class="text-sm font-bold text-white uppercase">User</span>
+                        </div>
+                    </div>
+                    <div class="hidden sm:block text-sm text-right">
+                        <p id="navUsername" class="font-semibold text-white truncate">Loading...</p>
+                        <p id="navRole" class="text-xs text-indigo-400 font-medium">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="p-8 pb-20 overflow-y-auto flex-1">
+            
+            <div class="mb-10 fade-in">
+                <h2 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 mb-2">
+                    Welcome back, <span id="greetingName" class="capitalize">User</span>! 👋
+                </h2>
+                <p class="text-slate-400">Here's your overview for <span id="siteBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 ml-1 border border-indigo-500/30">Site</span> today.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Stat Card 1 -->
+                <div class="glass-card rounded-2xl p-6 fade-in delay-100 relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full group-hover:bg-blue-500/20 transition-all duration-500"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-slate-400 font-medium text-sm border-b border-transparent">Total Equipment</h3>
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <h2 class="text-3xl font-bold text-white">42</h2>
+                        <span class="text-xs font-medium text-emerald-400 flex items-center"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>12%</span>
+                    </div>
+                </div>
+
+                <!-- Stat Card 2 -->
+                <div class="glass-card rounded-2xl p-6 fade-in delay-200 relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full group-hover:bg-purple-500/20 transition-all duration-500"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-slate-400 font-medium text-sm">Active Tasks</h3>
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center border border-purple-500/30">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <h2 class="text-3xl font-bold text-white">18</h2>
+                    </div>
+                </div>
+
+                <!-- Stat Card 3 -->
+                <div class="glass-card rounded-2xl p-6 fade-in delay-300 relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full group-hover:bg-emerald-500/20 transition-all duration-500"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-slate-400 font-medium text-sm">Inspections Passed</h3>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+                            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <h2 class="text-3xl font-bold text-white">85%</h2>
+                        <span class="text-xs font-medium text-emerald-400 flex items-center"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>2%</span>
+                    </div>
+                </div>
+
+                <!-- Stat Card 4 -->
+                <div class="glass-card rounded-2xl p-6 fade-in delay-300 relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 rounded-full group-hover:bg-amber-500/20 transition-all duration-500"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-slate-400 font-medium text-sm">Issues Found</h3>
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center border border-amber-500/30">
+                            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <h2 class="text-3xl font-bold text-white">3</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Charts & Tables -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Bar Chart -->
+                <div class="lg:col-span-2 glass-card rounded-2xl p-6 fade-in delay-300">
+                    <h3 class="text-lg font-semibold text-white mb-4">Inspection Schedule vs Actual per Site</h3>
+                    <div class="relative h-72 w-full">
+                        <canvas id="inspectionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Frequent Inspections -->
+                <div class="glass-card rounded-2xl p-6 fade-in delay-300">
+                    <h3 class="text-lg font-semibold text-white mb-4 border-b border-slate-700/50 pb-2">Most Frequently Inspected</h3>
+                    <div class="overflow-y-auto pr-2" style="max-height: 280px;" id="frequentList">
+                        <div class="text-center text-slate-500 py-4 text-sm">Loading...</div>
+                        <!-- Inserted dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Inspections Section -->
+            <div class="glass-card rounded-2xl p-6 fade-in delay-400">
+                <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-700/50">
+                    <h3 class="text-lg font-semibold text-white">Recent Inspections</h3>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="pb-3 pt-2 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Equipment</th>
+                                <th class="pb-3 pt-2 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                                <th class="pb-3 pt-2 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Site</th>
+                                <th class="pb-3 pt-2 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentTableBody" class="divide-y divide-slate-700/50">
+                            <tr><td colspan="4" class="text-center text-slate-500 py-8">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load user data from localStorage
+            const username = localStorage.getItem('username') || 'Unknown User';
+            const role = localStorage.getItem('role') || 'Guest';
+            const siteName = localStorage.getItem('siteName') || 'Global';
+
+            // Update UI elements
+            document.getElementById('navUsername').textContent = username;
+            document.getElementById('greetingName').textContent = username;
+            document.getElementById('navRole').textContent = role;
+            document.getElementById('navAvatar').textContent = username.substring(0, 2);
+            document.getElementById('siteBadge').textContent = siteName;
+            
+            if (role !== 'Leader') {
+                const usersMenu = document.querySelector('a[href="/users.html"]');
+                if (usersMenu) usersMenu.style.display = 'none';
+            }
+            const token = localStorage.getItem('token');
+            if(!token) return;
+
+            // Fetch and render Chart
+            fetch('/api/Dashboard/chart', { headers: { 'Authorization': `Bearer ${token}` }})
+                .then(res => res.json())
+                .then(data => {
+                    const ctx = document.getElementById('inspectionChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.labels,
+                            datasets: [
+                                {
+                                    label: 'Scheduled',
+                                    data: data.scheduled,
+                                    backgroundColor: 'rgba(99, 102, 241, 0.8)', // Indigo
+                                    borderRadius: 4
+                                },
+                                {
+                                    label: 'Actual Inspected',
+                                    data: data.actual,
+                                    backgroundColor: 'rgba(52, 211, 153, 0.8)', // Emerald
+                                    borderRadius: 4
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8', stepSize: 1 } },
+                                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                            },
+                            plugins: {
+                                legend: { labels: { color: '#e2e8f0' } }
+                            }
+                        }
+                    });
+                }).catch(err => console.error(err));
+
+            // Fetch Frequent
+            fetch('/api/Dashboard/frequent', { headers: { 'Authorization': `Bearer ${token}` }})
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById('frequentList');
+                    if(data.length === 0) { list.innerHTML = '<div class="text-center text-slate-500 py-4 text-sm">No data yet</div>'; return; }
+                    list.innerHTML = data.map(eq => `
+                        <div class="flex items-center justify-between py-3 border-b border-slate-700/30 last:border-0 hover:bg-slate-800/30 px-2 rounded-lg transition">
+                            <div>
+                                <p class="text-sm font-medium text-slate-200">${eq.equipmentName}</p>
+                                <p class="text-xs text-slate-500">${eq.hacCode} • ${eq.siteName}</p>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-xs font-bold border border-rose-500/30">
+                                ${eq.inspectionCount}x
+                            </div>
+                        </div>
+                    `).join('');
+                });
+
+            // Fetch Recent
+            fetch('/api/Dashboard/inspected', { headers: { 'Authorization': `Bearer ${token}` }})
+                .then(res => res.json())
+                .then(data => {
+                    const body = document.getElementById('recentTableBody');
+                    if(data.length === 0) { body.innerHTML = '<tr><td colspan="4" class="text-center text-slate-500 py-8">No inspections yet</td></tr>'; return; }
+                    body.innerHTML = data.map(record => {
+                        const isPassed = record.status === 'Passed';
+                        const statusClass = isPassed ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/20" : "bg-amber-500/20 text-amber-400 border-amber-500/20";
+                        const initial = record.equipmentName ? record.equipmentName.substring(0,2).toUpperCase() : "EQ";
+                        const datePrefix = new Date(record.inspectionDate).toLocaleDateString();
+                        
+                        return `
+                        <tr class="hover:bg-white/[0.02] transition-colors rounded-lg">
+                            <td class="py-4 px-4 flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-xs mr-3">${initial}</div>
+                                <div>
+                                    <p class="font-medium text-slate-200">${record.equipmentName}</p>
+                                    <p class="text-xs text-slate-500 font-mono">${record.hacCode}</p>
+                                </div>
+                            </td>
+                            <td class="py-4 px-4">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusClass}">${record.status}</span>
+                            </td>
+                            <td class="py-4 px-4 text-sm text-slate-300">${record.siteName}</td>
+                            <td class="py-4 px-4 text-sm text-slate-400">${datePrefix}</td>
+                        </tr>
+                        `;
+                    }).join('');
+                });
+
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('role');
+            localStorage.removeItem('siteName');
+            window.location.href = '/';
+        });
+    </script>
+</body>
+</html>
+

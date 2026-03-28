@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIVIN - Users Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 0; overflow-x: hidden; }
+        .bg-gradient-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.15; z-index: -1; animation: pulse-slow 15s infinite alternate; }
+        .blob-tr { top: -10%; right: -5%; width: 50vw; height: 50vw; background: radial-gradient(circle, #3b82f6 0%, transparent 70%); }
+        .blob-bl { bottom: -10%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, #8b5cf6 0%, transparent 70%); animation-delay: 5s; }
+        @keyframes pulse-slow { 0% { transform: scale(1); opacity: 0.1; } 100% { transform: scale(1.1); opacity: 0.2; } }
+        .glass-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5); }
+        .menu-item { transition: all 0.2s ease; cursor: pointer; }
+        .menu-item:hover, .menu-item.active { background: linear-gradient(90deg, rgba(79, 70, 229, 0.1) 0%, rgba(79, 70, 229, 0) 100%); border-left: 3px solid #6366f1; color: white; }
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen flex">
+    <script>if (!localStorage.getItem('token')) window.location.href = '/';</script>
+
+    <div class="bg-gradient-blob blob-tr"></div>
+    <div class="bg-gradient-blob blob-bl"></div>
+
+    <!-- Sidebar -->
+    <aside class="w-64 glass-card border-r border-slate-700/50 hidden md:flex flex-col flex-shrink-0 relative z-20">
+        <div class="h-20 flex items-center px-8 border-b border-slate-700/50">
+            <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">LIVIN<span class="text-slate-400 font-light text-lg">App</span></h1>
+        </div>
+        <div class="p-6 flex-1 overflow-y-auto">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Main Menu</p>
+            <nav class="space-y-2">
+                <a href="/home.html" class="menu-item flex items-center px-4 py-3 rounded-r-lg text-slate-400 hover:text-slate-200 group">
+                    <svg class="w-5 h-5 mr-3 text-slate-500 group-hover:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    Dashboard
+                </a>
+                <a href="/equipment.html" class="menu-item flex items-center px-4 py-3 rounded-r-lg text-slate-400 hover:text-slate-200 group">
+                    <svg class="w-5 h-5 mr-3 text-slate-500 group-hover:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    Equipment
+                </a>
+                <a href="/inspections.html" class="menu-item flex items-center px-4 py-3 rounded-r-lg text-slate-400 hover:text-slate-200 group">
+                    <svg class="w-5 h-5 mr-3 text-slate-500 group-hover:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    Inspections
+                </a>
+                <a href="/maintenance.html" class="menu-item flex items-center px-4 py-3 rounded-r-lg text-slate-400 hover:text-slate-200 group">
+                    <svg class="w-5 h-5 mr-3 text-slate-500 group-hover:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                    Maintenance
+                </a>
+                <a href="/users.html" class="menu-item active flex items-center px-4 py-3 rounded-r-lg text-slate-300 group">
+                    <svg class="w-5 h-5 mr-3 text-indigo-400 group-hover:text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    Users
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col relative z-10 w-full overflow-hidden">
+        <!-- Header -->
+        <header class="h-20 glass-card border-b border-slate-700/50 flex items-center justify-between px-8 sticky top-0 z-30">
+            <div class="flex items-center text-slate-300">
+                <div class="text-sm font-medium tracking-wide">
+                    <span class="text-slate-500">Pages</span> <span class="mx-2">/</span> <span class="text-white">Users</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-8 pb-20 overflow-y-auto flex-1">
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 fade-in">
+                <div>
+                    <h2 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 mb-2">User Management</h2>
+                    <p class="text-slate-400">Manage site access, roles, and inspector categories.</p>
+                </div>
+                <button onclick="openModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition shadow-lg shadow-indigo-500/20 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Add User
+                </button>
+            </div>
+
+            <!-- Table -->
+            <div class="glass-card rounded-2xl overflow-hidden fade-in delay-200">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-700/50 bg-slate-800/30">
+                                <th class="pb-3 pt-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Username</th>
+                                <th class="pb-3 pt-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Lengkap / Email</th>
+                                <th class="pb-3 pt-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Site</th>
+                                <th class="pb-3 pt-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Kategori & Role</th>
+                                <th class="pb-3 pt-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody" class="divide-y divide-slate-700/50">
+                            <tr><td colspan="5" class="text-center py-8 text-slate-500">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- Modal Form -->
+    <div id="userModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-lg transform scale-95 transition-transform" id="modalContent">
+            <div class="flex items-center justify-between p-6 border-b border-slate-700">
+                <h3 class="text-xl font-bold text-white" id="modalTitle">Add New User</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+            
+            <form id="userForm" class="p-6 space-y-4" onsubmit="saveUser(event)">
+                <input type="hidden" id="userId">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Username (Login ID)</label>
+                        <input type="text" id="username" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Password</label>
+                        <input type="password" id="password" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none" placeholder="Leave blank to keep current">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Nama Lengkap</label>
+                        <input type="text" id="fullName" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Email</label>
+                        <input type="email" id="email" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Kategori Inspektor</label>
+                        <select id="category" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                            <option value="">-- None --</option>
+                            <option value="Equipment">Equipment</option>
+                            <option value="Safety">Safety</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Hak Akses (Role)</label>
+                        <select id="role" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                            <option value="0">Leader</option>
+                            <option value="1">Inspector</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Site</label>
+                    <select id="siteId" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <option value="">Pilih Site...</option>
+                    </select>
+                </div>
+
+                <div class="pt-4 flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-medium transition border border-slate-700">Cancel</button>
+                    <button type="submit" id="saveBtn" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition shadow-lg shadow-indigo-500/20">Save User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Global Toast notification -->
+    <div id="toast" class="fixed bottom-5 right-5 glass-card border-green-500/30 text-emerald-300 p-4 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.2)] transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center">
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        <span id="toastMsg" class="font-medium text-sm">Success!</span>
+    </div>
+
+    <script>
+                    const role = localStorage.getItem('role') || 'Guest';
+            if (role !== 'Leader') {
+                const usersMenu = document.querySelector('a[href="/users.html"]');
+                if (usersMenu) usersMenu.style.display = 'none';
+            }
+            const token = localStorage.getItem('token');
+        let usersData = [];
+
+        function showToast(msg, isErr=false) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            if(isErr) {
+                t.classList.replace('border-green-500/30', 'border-red-500/30');
+                t.classList.replace('text-emerald-300', 'text-rose-400');
+            } else {
+                t.classList.replace('border-red-500/30', 'border-green-500/30');
+                t.classList.replace('text-rose-400', 'text-emerald-300');
+            }
+            t.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 4000);
+        }
+
+        async function init() {
+            // Load Sites for dropdown
+            try {
+                const res = await fetch('/api/Site', { headers: { 'Authorization': `Bearer ${token}` } });
+                if(res.ok) {
+                    const sites = await res.json();
+                    document.getElementById('siteId').innerHTML = '<option value="">Pilih Site...</option>' + 
+                        sites.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                }
+            } catch(e) {}
+
+            loadUsers();
+        }
+
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/User', { headers: { 'Authorization': `Bearer ${token}` }});
+                const body = document.getElementById('userTableBody');
+                if(!res.ok) { body.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-rose-400">Failed to load users</td></tr>'; return; }
+                
+                usersData = await res.json();
+                renderTable();
+            } catch(e) {
+                document.getElementById('userTableBody').innerHTML = '<tr><td colspan="5" class="text-center py-8 text-rose-400">Connection error</td></tr>';
+            }
+        }
+
+        function renderTable() {
+            const body = document.getElementById('userTableBody');
+            if(usersData.length === 0) { body.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-slate-500">No users found</td></tr>'; return; }
+            
+            body.innerHTML = usersData.map(u => {
+                const badgeColor = u.role === 'Leader' ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' : 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+                return `
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="py-4 px-6">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold text-xs mr-3 border border-slate-600">${u.username.substring(0,2).toUpperCase()}</div>
+                            <span class="font-medium text-slate-200">${u.username}</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6">
+                        <p class="font-medium text-white">${u.fullName || '-'}</p>
+                        <p class="text-xs text-slate-500">${u.email || '-'}</p>
+                    </td>
+                    <td class="py-4 px-6 text-sm text-slate-300">${u.siteName}</td>
+                    <td class="py-4 px-6">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700 mb-1">${u.inspectorCategory || 'General'}</span>
+                        <br>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${badgeColor}">${u.role}</span>
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                        <button onclick='editUser(${JSON.stringify(u)})' class="text-slate-400 hover:text-indigo-400 transition bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-sm border border-slate-700">Edit</button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function openModal() {
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = "";
+            document.getElementById('password').required = true;
+            document.getElementById('modalTitle').innerText = "Add New User";
+            
+            const modal = document.getElementById('userModal');
+            const content = document.getElementById('modalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('userModal');
+            const content = document.getElementById('modalContent');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function editUser(u) {
+            openModal();
+            document.getElementById('modalTitle').innerText = "Edit User";
+            document.getElementById('userId').value = u.id;
+            document.getElementById('username').value = u.username;
+            document.getElementById('password').required = false;
+            document.getElementById('fullName').value = u.fullName || "";
+            document.getElementById('email').value = u.email || "";
+            document.getElementById('category').value = u.inspectorCategory || "";
+            document.getElementById('role').value = u.role === "Leader" ? "0" : "1";
+            document.getElementById('siteId').value = u.siteId;
+        }
+
+        async function saveUser(e) {
+            e.preventDefault();
+            const btn = document.getElementById('saveBtn');
+            const isEditing = !!document.getElementById('userId').value;
+            btn.innerText = "Saving...";
+            
+            const payload = {
+                username: document.getElementById('username').value,
+                passwordHash: document.getElementById('password').value, // Hashing to be implemented backend! (using plain text for demo based on AuthController)
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                inspectorCategory: document.getElementById('category').value,
+                role: parseInt(document.getElementById('role').value),
+                siteId: parseInt(document.getElementById('siteId').value)
+            };
+
+            const url = isEditing ? `/api/User/${document.getElementById('userId').value}` : '/api/User';
+            const method = isEditing ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if(res.ok) {
+                    showToast(isEditing ? "User updated" : "User created");
+                    closeModal();
+                    loadUsers();
+                } else {
+                    const text = await res.text();
+                    showToast(text || "Error occurred", true);
+                }
+            } catch(e) { showToast("Connection error", true); }
+            finally { btn.innerText = "Save User"; }
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
+
