@@ -236,7 +236,11 @@
                 <!-- Bar Chart -->
                 <div class="lg:col-span-2 glass-card rounded-2xl p-6 fade-in delay-300">
                     <h3 class="text-lg font-semibold text-white mb-4">Inspection Schedule vs Actual per Site</h3>
-                    <div class="relative h-72 w-full">
+                    <div class="relative h-72 w-full" id="chartContainer">
+                        <div id="chartLoading" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 z-10">
+                            <svg class="animate-spin h-8 w-8 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <span class="text-sm">Loading chart data...</span>
+                        </div>
                         <canvas id="inspectionChart"></canvas>
                     </div>
                 </div>
@@ -302,6 +306,9 @@
             fetch('/api/Dashboard/chart', { headers: { 'Authorization': `Bearer ${token}` }})
                 .then(res => res.json())
                 .then(data => {
+                    const loadingEl = document.getElementById('chartLoading');
+                    if(loadingEl) loadingEl.style.display = 'none';
+
                     const ctx = document.getElementById('inspectionChart').getContext('2d');
                     new Chart(ctx, {
                         type: 'bar',

@@ -98,7 +98,7 @@
 
             <!-- Upload View -->
             <div id="viewUpload" class="hidden fade-in">
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     
                     <!-- Form Equipment -->
                     <div class="glass-card rounded-2xl p-6 relative">
@@ -116,6 +116,25 @@
                         <form class="space-y-4" onsubmit="uploadCSV(event, 'equipment')">
                             <input type="file" required accept=".csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500/10 file:text-blue-400 hover:file:bg-blue-500/20 cursor-pointer"/>
                             <button type="submit" class="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-500 transition shadow-lg shadow-blue-500/30">Upload to Database</button>
+                        </form>
+                    </div>
+
+                    <!-- Form Part -->
+                    <div class="glass-card rounded-2xl p-6 relative">
+                        <div class="w-12 h-12 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center mb-4 border border-orange-500/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Upload Parts</h3>
+                        <p class="text-slate-400 text-sm mb-6">Bind parts to existing equipment.</p>
+                        
+                        <a href="/api/Equipment/template/part" class="w-full mb-4 px-4 py-2 border border-slate-600 rounded-lg text-sm flex items-center justify-center hover:bg-slate-800 transition">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Download Template CSV
+                        </a>
+
+                        <form class="space-y-4" onsubmit="uploadCSV(event, 'part')">
+                            <input type="file" required accept=".csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-500/10 file:text-orange-400 hover:file:bg-orange-500/20 cursor-pointer"/>
+                            <button type="submit" class="w-full bg-orange-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-orange-500 transition shadow-lg shadow-orange-500/30">Upload to Database</button>
                         </form>
                     </div>
 
@@ -238,12 +257,13 @@
 
                 data.forEach(eq => {
                     const typeBadge = eq.type ? `<span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded text-xs ml-2">${eq.type}</span>` : '';
+                    const groupBadge = eq.group ? `<span class="bg-teal-500/20 text-teal-300 border border-teal-500/30 px-2 py-0.5 rounded text-xs ml-2">${eq.group}</span>` : '';
                     grid.innerHTML += `
                         <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
                             <div class="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center border border-slate-700 mb-4 shadow-lg text-slate-300">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                             </div>
-                            <h3 class="text-xl font-bold text-white leading-tight flex items-center flex-wrap gap-y-2">M/C: ${eq.name}${typeBadge}</h3>
+                            <h3 class="text-xl font-bold text-white leading-tight flex items-center flex-wrap gap-y-2">M/C: ${eq.name}${typeBadge}${groupBadge}</h3>
                             <p class="text-indigo-400 font-mono text-sm mt-1 mb-4">${eq.hacCode}</p>
                             <div class="flex items-center text-xs text-slate-400">
                                 <span class="bg-slate-800 px-2 py-1 rounded inline-flex items-center"><svg class="w-3 h-3 mr-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> 

@@ -55,11 +55,18 @@ namespace Livin.Api.Controllers
             var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
             var inspectorCategory = User.FindFirst("InspectorCategory")?.Value ?? string.Empty;
 
-            if (userRole != "Leader" && !string.IsNullOrEmpty(inspectorCategory) && !string.IsNullOrEmpty(equipment.Type))
+            if (userRole != "Leader" && !string.IsNullOrEmpty(inspectorCategory))
             {
-                if (!equipment.Type.Equals(inspectorCategory, StringComparison.OrdinalIgnoreCase))
+                var catLower = inspectorCategory.ToLower();
+                if (catLower == "safety")
                 {
-                    return BadRequest("Access denied. You cannot inspect equipment of this category.");
+                    if (string.IsNullOrEmpty(equipment.Type) || !equipment.Type.Equals("safety", StringComparison.OrdinalIgnoreCase))
+                        return BadRequest("Access denied. You cannot inspect equipment of this category.");
+                }
+                else 
+                {
+                    if (!string.IsNullOrEmpty(equipment.Type) && !equipment.Type.Equals(inspectorCategory, StringComparison.OrdinalIgnoreCase))
+                        return BadRequest("Access denied. You cannot inspect equipment of this category.");
                 }
             }
 

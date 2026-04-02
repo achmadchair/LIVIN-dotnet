@@ -113,6 +113,7 @@
                     <!-- Dynamic Form -->
                     <form id="inspectionForm" onsubmit="submitInspection(event)">
                         <input type="hidden" id="equipmentId">
+                        <input type="hidden" id="equipmentType">
                         
                         <div id="partsContainer" class="space-y-8 mb-8">
                             <!-- Injected dynamically -->
@@ -146,6 +147,15 @@
             const token = localStorage.getItem('token');
         let currentEquipment = null;
         let html5QrcodeScanner = null;
+        let taskTemplatesMap = {};
+
+        function changeTask(selectElem, targetId) {
+            const taskId = selectElem.value;
+            const target = document.getElementById(targetId);
+            if (target && taskTemplatesMap[taskId]) {
+                target.innerHTML = taskTemplatesMap[taskId];
+            }
+        }
 
         document.getElementById('hacInput').focus();
 
@@ -250,68 +260,187 @@
             document.getElementById('viewScanner').classList.add('hidden');
             document.getElementById('viewForm').classList.remove('hidden');
             
+            const eqTypeStr = (eq.type || eq.Type || 'Equipment').toLowerCase();
+            const badgeColor = eqTypeStr === 'safety' ? 'bg-red-500/20 text-red-300 border-red-500/30' : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30';
+            
             document.getElementById('eqHacCode').innerText = eq.hacCode || eq.hACCode || eq.HACCode;
-            document.getElementById('eqName').innerText = eq.name || eq.Name;
+            document.getElementById('eqName').innerHTML = `${eq.name || eq.Name} <span class="${badgeColor} border px-2 py-0.5 rounded text-xs ml-2 align-middle font-normal uppercase tracking-wider">${eqTypeStr}</span>`;
             document.getElementById('equipmentId').value = eq.id || eq.Id;
+            document.getElementById('equipmentType').value = eqTypeStr === 'safety' ? 1 : 0;
 
             const container = document.getElementById('partsContainer');
             container.innerHTML = '';
 
-            const parts = eq.tasks || eq.Tasks || [];
+            const parts = eq.parts || eq.Parts || [];
             if(parts.length === 0) {
-                container.innerHTML = `<p class="text-slate-500 italic">This equipment has no matching parts/tasks configured.</p>`;
+                container.innerHTML = `<p class="text-slate-500 italic">This equipment has no matching parts configured.</p>`;
                 return;
             }
 
-            parts.forEach((part, idx) => {
-                const partName = part.description || part.Description;
-                const standards = part.standards || part.Standards || [];
-                const partId = part.id || part.Id;
-                
-                let standardsHtml = standards.map(std => {
-                    const stdText = std.standardText || std.StandardText;
-                    const stdId = std.id || std.Id;
-                    return `
-                    <div class="bg-slate-800/50 rounded-lg p-4 mb-3 border border-slate-700/50 inspection-standard" data-standard-id="${stdId}">
-                        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                            <div class="flex-1 mt-2">
-                                <p class="text-slate-300 font-medium">${stdText}</p>
-                            </div>
-                            <div class="w-full md:w-64 flex-shrink-0 space-y-3">
-                                <div>
-                                    <label class="block text-xs text-slate-500 mb-1">Pilihan Task</label>
-                                    <select required class="w-full bg-slate-900 border border-slate-700 text-slate-300 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 task-val">
-                                        <option value="" disabled selected>Pilih Task...</option>
-                                        <option value="OK">OK</option>
-                                        <option value="Rusak">Rusak</option>
-                                        <option value="Perlu Setel">Perlu Setel</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs text-slate-500 mb-1">Tindak Lanjut (Jika Tidak Sesuai)</label>
-                                    <select required class="w-full bg-slate-900 border border-slate-700 text-slate-300 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 followup-val">
-                                        <option value="None">None (Sesuai Standar)</option>
-                                        <option value="Repair">Repair</option>
-                                        <option value="Maintenance">Maintenance</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    `;
-                }).join('');
+            taskTemplatesMap = {};
 
-                container.innerHTML += `
-                    <div class="relative pl-6 border-l-2 border-indigo-500/30">
-                        <div class="absolute w-3 h-3 bg-indigo-500 rounded-full -left-[7px] top-1 shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
-                        <h4 class="text-lg font-semibold text-white mb-4">Part: ${partName}</h4>
-                        
-                        <!-- hidden input holding task id for mapping -->
-                        <div class="inspection-part" data-task-id="${partId}">
-                            ${standardsHtml}
+            parts.forEach((part, pIdx) => {
+                const partName = part.name || part.Name;
+                const partId = part.id || part.Id;
+                const partGroup = part.group || part.Group || '';
+                
+                const tasks = part.tasks || part.Tasks || [];
+                
+                if (tasks.length === 0) {
+                    container.innerHTML += `
+                        <div class="relative pl-6 border-l-2 border-slate-700/50 mb-8">
+                            <div class="absolute w-3 h-3 bg-slate-700 rounded-full -left-[7px] top-1"></div>
+                            <h4 class="text-lg font-semibold text-slate-400 mb-2">Part: ${partName} <span class="text-xs font-normal">(${partGroup || 'No Group'})</span></h4>
+                            <p class="text-sm text-slate-500 italic pl-2">No tasks available for this part.</p>
                         </div>
-                    </div>
-                `;
+                    `;
+                    return;
+                }
+
+                if (eqTypeStr === 'safety') {
+                    // Safety Type: Part has a group, tasks are selectable via dropdown
+                    const targetId = `tgt-part-${partId}`;
+                    let optionsHtml = '';
+                    
+                    tasks.forEach(task => {
+                        const taskId = task.id || task.Id;
+                        const taskName = task.name || task.Name || task.description || task.Description;
+                        optionsHtml += `<option value="${taskId}">${taskName}</option>`;
+                        
+                        const standards = task.standards || task.Standards || [];
+                        let standardsHtml = standards.map(std => {
+                            const stdText = std.standardText || std.StandardText;
+                            const stdId = std.id || std.Id;
+                            return `
+                            <div class="bg-slate-800/50 rounded-lg p-4 mb-3 border border-slate-700/50 inspection-standard" data-standard-id="${stdId}">
+                                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                                    <div class="flex-1 mt-2">
+                                        <p class="text-slate-300 font-medium whitespace-pre-line">${stdText}</p>
+                                    </div>
+                                    <div class="w-full md:w-64 flex-shrink-0 space-y-3">
+                                        <div>
+                                            <label class="block text-xs text-slate-500 mb-1">Status</label>
+                                            <select required class="w-full bg-slate-900 border border-slate-700 text-slate-300 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 task-val">
+                                                <option value="" disabled selected>Pilih Status...</option>
+                                                <option value="OK">OK / Sesuai</option>
+                                                <option value="Rusak">Rusak / Tidak Sesuai</option>
+                                                <option value="Perlu Setel">Perlu Setel / Perawatan</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs text-slate-500 mb-1">Tindak Lanjut</label>
+                                            <select required class="w-full bg-slate-900 border border-slate-700 text-slate-300 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 followup-val">
+                                                <option value="None">None (Sesuai Standar)</option>
+                                                <option value="Repair">Repair</option>
+                                                <option value="Maintenance">Maintenance</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                        }).join('');
+
+                        if (standards.length === 0) {
+                            standardsHtml = `<p class="text-sm text-slate-500 italic mb-4">No standards configured for this task.</p>`;
+                        }
+
+                        taskTemplatesMap[taskId] = `
+                        <div class="mt-4 inspection-task" data-task-id="${taskId}">
+                            <div class="pl-2">
+                                ${standardsHtml}
+                            </div>
+                        </div>
+                        `;
+                    });
+
+                    const firstTaskId = tasks[0].id || tasks[0].Id;
+
+                    container.innerHTML += `
+                        <div class="relative pl-6 border-l-2 border-rose-500/30 mb-8 inspection-part" data-part-id="${partId}">
+                            <div class="absolute w-3 h-3 bg-rose-500 rounded-full -left-[7px] top-1 shadow-[0_0_10px_rgba(244,63,94,0.5)]"></div>
+                            <h4 class="text-lg font-semibold text-white mb-1">Part: ${partName}</h4>
+                            ${partGroup ? `<p class="text-xs text-rose-400 font-medium mb-4 uppercase tracking-wide">Group: ${partGroup}</p>` : ''}
+                            
+                            <div class="mt-4 mb-6">
+                                <label class="block text-xs text-slate-400 mb-2">Pilihan Task:</label>
+                                <select class="w-full bg-slate-900 border border-slate-700 text-slate-300 text-md rounded-lg p-3 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition shadow-inner" onchange="changeTask(this, '${targetId}')">
+                                    ${optionsHtml}
+                                </select>
+                            </div>
+                            <div id="${targetId}" class="group-standards-container bg-slate-900/50 p-4 rounded-xl border border-slate-700/30">
+                                ${taskTemplatesMap[firstTaskId]}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Equipment Type: List all tasks flatly
+                    let tasksHtml = '';
+                    tasks.forEach(task => {
+                        const taskId = task.id || task.Id;
+                        const taskName = task.name || task.Name || task.description || task.Description;
+                        
+                        const standards = task.standards || task.Standards || [];
+                        let standardsHtml = standards.map(std => {
+                            const stdText = std.standardText || std.StandardText;
+                            const stdId = std.id || std.Id;
+                            return `
+                            <div class="bg-slate-800/50 rounded-lg p-4 mb-3 border border-slate-700/50 inspection-standard" data-standard-id="${stdId}">
+                                <div class="flex flex-col xl:flex-row xl:items-start justify-between gap-4">
+                                    <div class="flex-1 mt-1">
+                                        <div class="flex items-start">
+                                            <svg class="w-4 h-4 text-indigo-400 mt-1 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <p class="text-slate-300 text-sm whitespace-pre-line">${stdText}</p>
+                                        </div>
+                                    </div>
+                                    <div class="w-full xl:w-64 flex-shrink-0 space-y-3">
+                                        <div>
+                                            <select required class="w-full bg-slate-900 border border-slate-700 text-slate-300 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 task-val">
+                                                <option value="" disabled selected>Pilih Status...</option>
+                                                <option value="OK">OK / Sesuai</option>
+                                                <option value="Rusak">Rusak / Tidak Sesuai</option>
+                                                <option value="Perlu Setel">Perlu Setel / Perawatan</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <select required class="w-full bg-slate-900 border border-slate-700 text-slate-300 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 followup-val">
+                                                <option value="None">None (Sesuai Standar)</option>
+                                                <option value="Repair">Repair</option>
+                                                <option value="Maintenance">Maintenance</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                        }).join('');
+
+                        if (standards.length === 0) {
+                            standardsHtml = `<p class="text-sm text-slate-500 italic mb-4">No standards configured for this task.</p>`;
+                        }
+
+                        tasksHtml += `
+                        <div class="mt-6 inspection-task" data-task-id="${taskId}">
+                            <h5 class="text-sm font-semibold text-indigo-300 mb-3 flex items-center bg-indigo-500/10 p-2 rounded-lg border border-indigo-500/20">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                Task: ${taskName}
+                            </h5>
+                            <div class="pl-2 lg:pl-6">
+                                ${standardsHtml}
+                            </div>
+                        </div>
+                        `;
+                    });
+
+                    container.innerHTML += `
+                        <div class="relative pl-4 lg:pl-8 border-l-2 border-indigo-500/40 mb-10 inspection-part" data-part-id="${partId}">
+                            <div class="absolute w-4 h-4 bg-indigo-500 rounded-full -left-[9px] top-0.5 shadow-[0_0_12px_rgba(99,102,241,0.6)] border-2 border-slate-900"></div>
+                            <h4 class="text-xl font-bold text-white mb-2">${partName}</h4>
+                            <div class="w-full h-px bg-gradient-to-r from-slate-700 to-transparent mb-4"></div>
+                            ${tasksHtml}
+                        </div>
+                    `;
+                }
             });
         }
 
@@ -323,11 +452,11 @@
             btn.disabled = true;
 
             const eqId = parseInt(document.getElementById('equipmentId').value);
-            const partNodes = document.querySelectorAll('.inspection-part');
+            const taskNodes = document.querySelectorAll('.inspection-task');
             
             let details = [];
-            partNodes.forEach(node => {
-                const taskId = parseInt(node.getAttribute('data-task-id')); // Maps to InspectionTaskId (Part)
+            taskNodes.forEach(node => {
+                const taskId = parseInt(node.getAttribute('data-task-id'));
                 
                 const standardsNodes = node.querySelectorAll('.inspection-standard');
                 standardsNodes.forEach(stdNode => {
@@ -348,7 +477,7 @@
 
             const payload = {
                 equipmentId: eqId,
-                type: 0, // Equipment type enum
+                type: parseInt(document.getElementById('equipmentType').value || 0),
                 details: details
             };
 

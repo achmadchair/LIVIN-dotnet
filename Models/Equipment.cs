@@ -10,9 +10,10 @@ namespace Livin.Api.Models
         public Site? Site { get; set; }
         
         public string Type { get; set; } = string.Empty; // "Inspection" or "Safety"
+        public string Group { get; set; } = string.Empty;
         
         public DateTime? NextInspectionDate { get; set; }
         
-        public ICollection<InspectionTask> Tasks { get; set; } = new List<InspectionTask>();
+        public ICollection<Part> Parts { get; set; } = new List<Part>();
     }
 }

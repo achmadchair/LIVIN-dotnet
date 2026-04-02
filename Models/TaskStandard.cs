@@ -7,5 +7,12 @@ namespace Livin.Api.Models
         
         public int InspectionTaskId { get; set; }
         public InspectionTask? InspectionTask { get; set; }
+        
+        public string Type { get; set; } = string.Empty;
+        public string Group { get; set; } = string.Empty;
+        
+        public string HACCode { get; set; } = string.Empty;
+        public string PartName { get; set; } = string.Empty;
+        public string TaskName { get; set; } = string.Empty;
     }
 }

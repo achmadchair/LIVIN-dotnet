@@ -57,7 +57,11 @@ namespace Livin.Api.Data
             context.Equipments.Add(equipment);
             context.SaveChanges();
 
-            var task = new InspectionTask { Description = "Check Oil Level", EquipmentId = equipment.Id };
+            var part = new Part { HACCode = "HAC-BTM-001", Name = "Engine", EquipmentId = equipment.Id, SiteId = sites[0].Id };
+            context.Parts.Add(part);
+            context.SaveChanges();
+
+            var task = new InspectionTask { Description = "Check Oil Level", PartId = part.Id };
             context.InspectionTasks.Add(task);
             context.SaveChanges();
 

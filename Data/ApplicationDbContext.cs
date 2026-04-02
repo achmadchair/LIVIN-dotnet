@@ -12,6 +12,7 @@ namespace Livin.Api.Data
         public DbSet<Site> Sites { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Equipment> Equipments { get; set; }
+        public DbSet<Part> Parts { get; set; }
         public DbSet<InspectionTask> InspectionTasks { get; set; }
         public DbSet<TaskStandard> TaskStandards { get; set; }
         public DbSet<InspectionRecord> InspectionRecords { get; set; }
@@ -40,10 +41,22 @@ namespace Livin.Api.Data
                 .HasForeignKey(u => u.SiteId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Part>()
+                .HasOne(p => p.Site)
+                .WithMany()
+                .HasForeignKey(p => p.SiteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Part>()
+                .HasOne(p => p.Equipment)
+                .WithMany(e => e.Parts)
+                .HasForeignKey(p => p.EquipmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<InspectionTask>()
-                .HasOne(t => t.Equipment)
-                .WithMany(e => e.Tasks)
-                .HasForeignKey(t => t.EquipmentId)
+                .HasOne(t => t.Part)
+                .WithMany(p => p.Tasks)
+                .HasForeignKey(t => t.PartId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<TaskStandard>()

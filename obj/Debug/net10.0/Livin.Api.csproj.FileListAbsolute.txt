@@ -159,8 +159,9 @@ D:\ProjectAplikasi\dotnet\LIVIN\obj\Debug\net10.0\Livin.Api.genruntimeconfig.cac
 D:\ProjectAplikasi\dotnet\LIVIN\obj\Debug\net10.0\ref\Livin.Api.dll
 D:\ProjectAplikasi\dotnet\LIVIN\bin\Debug\net10.0\Livin.Api.staticwebassets.runtime.json
 D:\ProjectAplikasi\dotnet\LIVIN\obj\Debug\net10.0\compressed\klu60mzja5-{0}-7rqdmasrke-7rqdmasrke.gz
-D:\ProjectAplikasi\dotnet\LIVIN\obj\Debug\net10.0\compressed\msfab9t8kt-{0}-mwgpytptsw-mwgpytptsw.gz
-D:\ProjectAplikasi\dotnet\LIVIN\obj\Debug\net10.0\compressed\635vzw1dey-{0}-w3aij268gp-w3aij268gp.gz
 D:\ProjectAplikasi\dotnet\LIVIN\obj\Debug\net10.0\compressed\iplf208948-{0}-5j5chnzdwi-5j5chnzdwi.gz
-D:\ProjectAplikasi\dotnet\LIVIN\obj\Debug\net10.0\compressed\2fg5hea0j1-{0}-s7wxvszb05-s7wxvszb05.gz
 D:\ProjectAplikasi\dotnet\LIVIN\obj\Debug\net10.0\compressed\1u3zibyaa8-{0}-7ln6acs3i0-7ln6acs3i0.gz
+D:\ProjectAplikasi\dotnet\LIVIN\obj\Debug\net10.0\Livin.Api.sourcelink.json
+D:\ProjectAplikasi\dotnet\LIVIN\obj\Debug\net10.0\compressed\msfab9t8kt-{0}-jp1cxo3rdw-jp1cxo3rdw.gz
+D:\ProjectAplikasi\dotnet\LIVIN\obj\Debug\net10.0\compressed\635vzw1dey-{0}-b79lrkgfmn-b79lrkgfmn.gz
+D:\ProjectAplikasi\dotnet\LIVIN\obj\Debug\net10.0\compressed\2fg5hea0j1-{0}-vgbprikql3-vgbprikql3.gz

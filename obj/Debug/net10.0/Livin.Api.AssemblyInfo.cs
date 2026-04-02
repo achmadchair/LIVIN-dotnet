@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Livin.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+91a3c88fbcf7b98ade9ba938c5550cdc2fb37c74")]
 [assembly: System.Reflection.AssemblyProductAttribute("Livin.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Livin.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

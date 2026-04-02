@@ -30,6 +30,10 @@ namespace Livin.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("HACCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -147,12 +151,28 @@ namespace Livin.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EquipmentId")
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HACCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PartId")
                         .HasColumnType("int");
+
+                    b.Property<string>("PartName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EquipmentId");
+                    b.HasIndex("PartId");
 
                     b.ToTable("InspectionTasks");
                 });
@@ -202,6 +222,45 @@ namespace Livin.Api.Migrations
                     b.ToTable("MaintenanceRecords");
                 });
 
+            modelBuilder.Entity("Livin.Api.Models.Part", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EquipmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HACCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EquipmentId");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("Parts");
+                });
+
             modelBuilder.Entity("Livin.Api.Models.Site", b =>
                 {
                     b.Property<int>("Id")
@@ -227,10 +286,30 @@ namespace Livin.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HACCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("InspectionTaskId")
                         .HasColumnType("int");
 
+                    b.Property<string>("PartName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("StandardText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TaskName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -347,13 +426,13 @@ namespace Livin.Api.Migrations
 
             modelBuilder.Entity("Livin.Api.Models.InspectionTask", b =>
                 {
-                    b.HasOne("Livin.Api.Models.Equipment", "Equipment")
+                    b.HasOne("Livin.Api.Models.Part", "Part")
                         .WithMany("Tasks")
-                        .HasForeignKey("EquipmentId")
+                        .HasForeignKey("PartId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Equipment");
+                    b.Navigation("Part");
                 });
 
             modelBuilder.Entity("Livin.Api.Models.MaintenanceRecord", b =>
@@ -371,6 +450,25 @@ namespace Livin.Api.Migrations
                     b.Navigation("Equipment");
 
                     b.Navigation("InspectionRecord");
+                });
+
+            modelBuilder.Entity("Livin.Api.Models.Part", b =>
+                {
+                    b.HasOne("Livin.Api.Models.Equipment", "Equipment")
+                        .WithMany("Parts")
+                        .HasForeignKey("EquipmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Livin.Api.Models.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Equipment");
+
+                    b.Navigation("Site");
                 });
 
             modelBuilder.Entity("Livin.Api.Models.TaskStandard", b =>
@@ -397,7 +495,7 @@ namespace Livin.Api.Migrations
 
             modelBuilder.Entity("Livin.Api.Models.Equipment", b =>
                 {
-                    b.Navigation("Tasks");
+                    b.Navigation("Parts");
                 });
 
             modelBuilder.Entity("Livin.Api.Models.InspectionRecord", b =>
@@ -408,6 +506,11 @@ namespace Livin.Api.Migrations
             modelBuilder.Entity("Livin.Api.Models.InspectionTask", b =>
                 {
                     b.Navigation("Standards");
+                });
+
+            modelBuilder.Entity("Livin.Api.Models.Part", b =>
+                {
+                    b.Navigation("Tasks");
                 });
 
             modelBuilder.Entity("Livin.Api.Models.Site", b =>
